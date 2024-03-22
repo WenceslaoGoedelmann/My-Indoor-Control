@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <title>My Indoor Control</title>
+    <style>
+      html {
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        list-style: none;
+        box-sizing: border-box;
+        font-family: system-ui;
+        color: white;
+      }
+
+      body {
+        background-color: #0b2b33;
+      }
+
+      h1,
+      h2,
+      h3 {
+        color: #d2bbb2;
+      }
+
+      h1 {
+        text-shadow: 3px 2px 4px #090909;
+        margin: 20px 0;
+        font-size: 35px;
+      }
+
+      h2 {
+        font-size: 30px;
+        margin-bottom: 5px;
+      }
+
+      h3 {
+        font-size: 23px;
+        margin-bottom: 5px;
+      }
+
+      input {
+        width: 35px;
+        font-size: 20px;
+        border-radius: 5px;
+        border: none;
+        margin: 10px;
+      }
+
+      .button_container {
+        display: flex;
+        flex-direction: column;
+        width: 50%;
+      }
+
+      button {
+        border-radius: 5px;
+        border: none;
+        margin: 5px 0;
+        padding: 8px 30px;
+        font-size: 15px;
+      }
+
+      .boton_auto {
+        background-color: gray;
+      }
+
+      .boton_man {
+        background-color: #403f3f;
+      }
+
+      .boton_tipo1 {
+        background-color: slateblue;
+      }
+
+      .boton_tipo2 {
+        background-color: crimson;
+      }
+
+      .boton_on {
+        background-color: rgb(3, 103, 3);
+      }
+
+      .boton_off {
+        background-color: #383737;
+      }
+
+      .activo {
+        background-color: crimson;
+        padding: 3px 8px;
+        font-size: 20px;
+        margin: 5px;
+      }
+
+      .inactivo {
+        background-color: #383737;
+        padding: 3px 8px;
+        font-size: 20px;
+        margin: 5px;
+      }
+
+      .contenedor {
+        background-color: #111111;
+        width: 250px;
+        border-radius: 10px;
+        box-shadow: 2px 1px 4px 2px #090909;
+        margin: 10px 0;
+        padding-bottom: 4px;
+        width: 100%;
+      }
+
+      .contenedor span {
+        font-size: 20px;
+      }
+
+      .temp_hum_contenedor {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 5px 0;
+      }
+
+      .temp_hum_contenedor span {
+        font-size: 20px;
+      }
+
+      .Temp_Hume {
+        font-size: 30px;
+      }
+
+      .Temp_Hume span {
+        font-size: 30px;
+      }
+
+      #temperatura {
+        margin-left: 5px;
+      }
+
+      #humedad {
+        margin-left: 5px;
+      }
+
+      #modo_vent_config span {
+        font-size: 20px;
+      }
+
+      .icon-ventilacion {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 45px;
+        margin: -30px 26px -2px 0px;
+        color: antiquewhite;
+      }
+
+      .icon-humedad {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 45px;
+        margin: -30px 26px -2px 0px;
+        color: skyblue;
+      }
+
+      .icon-iluminacion {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 45px;
+        margin: -30px 26px -2px 0px;
+      }
+
+      .icon-iluminacion-on {
+        color: gold;
+      }
+
+      .icon-riego {
+        display: flex;
+        justify-content: flex-end;
+        font-size: 45px;
+        margin: -15px 26px -13px 0px;
+        color: antiquewhite;
+      }
+    </style>
+  </head>
+
+  <body>
+    <center>
+      <h1>My Indoor Control</h1>
+      <div class="contenedor temp_hum_contenedor">
+        <span>Temperatura actual</span>
+        <div class="Temp_Hume">
+          <i class="fa-solid fa-temperature-full" style="color: #fb0e49"></i
+          ><span id="temperatura">20</span><span>°C</span>
+        </div>
+      </div>
+      <div class="contenedor temp_hum_contenedor">
+        <span>Humedad actual</span>
+        <div class="Temp_Hume">
+          <i class="fa-solid fa-droplet" style="color: skyblue"></i
+          ><span id="humedad">60</span><span>%</span>
+        </div>
+      </div>
+      <div class="contenedor">
+        <h2>Temperatura</h2>
+        <div class="icon-ventilacion">
+          <i id="icon-ventilacion" class="fa-solid fa-fan"></i>
+        </div>
+        <div class="button_container">
+          <button
+            class="boton_tipo1"
+            id="tipo_vent"
+            onclick="funcionTipo(this)"
+          >
+            Enfriamiento
+          </button>
+          <button
+            class="boton_auto"
+            id="modo_vent"
+            onclick="funcionAutoMan(this)"
+          >
+            Automático
+          </button>
+          <button
+            class="boton_on"
+            id="modo_vent_estado"
+            style="display: none"
+            onclick="funcionOnOff(this)"
+          >
+            Encender
+          </button>
+        </div>
+        <div id="modo_vent_config" style="display: block">
+          <span>Temperatura setpoint:</span>
+          <input
+            type="number"
+            id="temp_setpoint"
+            onchange="funcionSetpoint(this)"
+            min="0"
+            max="70"
+          />
+          <span>°C</span>
+        </div>
+      </div>
+      <div class="contenedor">
+        <h2>Humedad</h2>
+        <div class="icon-humedad">
+          <i id="icon-humedad" class="fa-solid fa-droplet"></i>
+        </div>
+        <div class="button_container">
+          <button
+            class="boton_tipo1"
+            id="tipo_hume"
+            onclick="funcionTipo(this)"
+          >
+            Deshumidificación
+          </button>
+          <button
+            class="boton_auto"
+            id="modo_hume"
+            onclick="funcionAutoMan(this)"
+          >
+            Automático
+          </button>
+          <button
+            class="boton_on"
+            id="modo_hume_estado"
+            style="display: none"
+            onclick="funcionOnOff(this)"
+          >
+            Encender
+          </button>
+        </div>
+        <div id="modo_hume_config" style="display: block">
+          <span>Humedad setpoint:</span>
+          <input
+            type="number"
+            id="hume_setpoint"
+            onchange="funcionSetpoint(this)"
+            min="0"
+            max="100"
+          />
+          <span>%</span>
+        </div>
+      </div>
+      <div class="contenedor">
+        <h2>Iluminación</h2>
+        <div class="icon-iluminacion" id="icon-iluminacion">
+          <i class="fa-solid fa-lightbulb"></i>
+        </div>
+        <button class="boton_auto" id="modo_t1" onclick="funcionAutoMan(this)">
+          Automático
+        </button>
+        <button
+          class="boton_on"
+          id="modo_t1_estado"
+          style="display: none"
+          onclick="funcionOnOff(this)"
+        >
+          Encender
+        </button>
+        <div id="modo_t1_config" style="display: block">
+          <div>
+            <span>Hora inicio:</span>
+            <input
+              type="number"
+              id="h_i_t1_id"
+              onchange="funcionHora(this)"
+              min="0"
+              max="23"
+            />
+            <span>:</span>
+            <input
+              type="number"
+              id="m_i_t1_id"
+              onchange="funcionHora(this)"
+              min="0"
+              max="59"
+            />
+            <span>:</span>
+            <input
+              type="number"
+              id="s_i_t1_id"
+              onchange="funcionHora(this)"
+              min="0"
+              max="59"
+            />
+          </div>
+
+          <div>
+            <span>Hora fin:</span>
+            <input
+              type="number"
+              id="h_f_t1_id"
+              onchange="funcionHora(this)"
+              min="0"
+              max="23"
+            />
+            <span>:</span>
+            <input
+              type="number"
+              id="m_f_t1_id"
+              onchange="funcionHora(this)"
+              min="0"
+              max="59"
+            />
+            <span>:</span>
+            <input
+              type="number"
+              id="s_f_t1_id"
+              onchange="funcionHora(this)"
+              min="0"
+              max="59"
+            />
+          </div>
+
+          <div>
+            <button class="inactivo" id="dom_t1_id" onclick="funcionDia(this)">
+              D
+            </button>
+            <button class="inactivo" id="lun_t1_id" onclick="funcionDia(this)">
+              L
+            </button>
+            <button class="inactivo" id="mar_t1_id" onclick="funcionDia(this)">
+              M
+            </button>
+            <button class="inactivo" id="mie_t1_id" onclick="funcionDia(this)">
+              M
+            </button>
+            <button class="inactivo" id="jue_t1_id" onclick="funcionDia(this)">
+              J
+            </button>
+            <button class="inactivo" id="vie_t1_id" onclick="funcionDia(this)">
+              V
+            </button>
+            <button class="inactivo" id="sab_t1_id" onclick="funcionDia(this)">
+              S
+            </button>
+          </div>
+        </div>
+      </div>
+      <div class="contenedor">
+        <h2>Riego</h2>
+        <div class="icon-riego">
+          <i id="icon-riego" class="fa-solid fa-faucet-drip"></i>
+        </div>
+        <button class="boton_auto" id="modo_t2" onclick="funcionAutoMan(this)">
+          Automatico
+        </button>
+        <button
+          class="boton_on"
+          id="modo_t2_estado"
+          style="display: none"
+          onclick="funcionOnOff(this)"
+        >
+          Encender
+        </button>
+
+        <div id="modo_t2_config" style="display: block">
+          <div>
+            <span>Hora inicio:</span>
+            <input type="number" id="h_i_t2_id" onchange="funcionHora(this)" />
+            <span>:</span>
+            <input type="number" id="m_i_t2_id" onchange="funcionHora(this)" />
+            <span>:</span>
+            <input type="number" id="s_i_t2_id" onchange="funcionHora(this)" />
+          </div>
+
+          <div>
+            <span>Hora fin:</span>
+            <input type="number" id="h_f_t2_id" onchange="funcionHora(this)" />
+            <span>:</span>
+            <input type="number" id="m_f_t2_id" onchange="funcionHora(this)" />
+            <span>:</span>
+            <input type="number" id="s_f_t2_id" onchange="funcionHora(this)" />
+          </div>
+
+          <div>
+            <button class="inactivo" id="dom_t2_id" onclick="funcionDia(this)">
+              D
+            </button>
+            <button class="inactivo" id="lun_t2_id" onclick="funcionDia(this)">
+              L
+            </button>
+            <button class="inactivo" id="mar_t2_id" onclick="funcionDia(this)">
+              M
+            </button>
+            <button class="inactivo" id="mie_t2_id" onclick="funcionDia(this)">
+              M
+            </button>
+            <button class="inactivo" id="jue_t2_id" onclick="funcionDia(this)">
+              J
+            </button>
+            <button class="inactivo" id="vie_t2_id" onclick="funcionDia(this)">
+              V
+            </button>
+            <button class="inactivo" id="sab_t2_id" onclick="funcionDia(this)">
+              S
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="contenedor">
+        <h3>Configuración</h3>
+        <div>
+          <span>Hora Actual:</span>
+          <input
+            type="number"
+            id="ajust_h_id"
+            onchange="funcionAjuste(this)"
+            min="0"
+            max="23"
+          />
+          <span>:</span>
+          <input
+            type="number"
+            id="ajust_m_id"
+            onchange="funcionAjuste(this)"
+            min="0"
+            max="59"
+          />
+          <span>:</span>
+          <input
+            type="number"
+            id="ajust_s_id"
+            onchange="funcionAjuste(this)"
+            min="0"
+            max="59"
+          />
+        </div>
+        <div>
+          <span>Fecha Actual:</span>
+          <input
+            type="number"
+            id="ajust_dia_id"
+            onchange="funcionAjuste(this)"
+            min="1"
+            max="31"
+          />
+          <span>/</span>
+          <input
+            type="number"
+            id="ajust_mes_id"
+            onchange="funcionAjuste(this)"
+            min="1"
+            max="12"
+          />
+          <span>/</span>
+          <input
+            type="number"
+            id="ajust_ano_id"
+            onchange="funcionAjuste(this)"
+            min="2000"
+            max="2200"
+          />
+        </div>
+      </div>
+    </center>
+    <script>
+      const arrTH = ["temperatura", "humedad"];
+      const arrValue = [
+        "temp_setpoint",
+        "hume_setpoint",
+        "h_i_t1_id",
+        "m_i_t1_id",
+        "s_i_t1_id",
+        "h_f_t1_id",
+        "m_f_t1_id",
+        "s_f_t1_id",
+        "h_i_t2_id",
+        "m_i_t2_id",
+        "s_i_t2_id",
+        "h_f_t2_id",
+        "m_f_t2_id",
+        "s_f_t2_id",
+      ];
+      const arrClass = [
+        "dom_t1_id",
+        "lun_t1_id",
+        "mar_t1_id",
+        "mie_t1_id",
+        "jue_t1_id",
+        "vie_t1_id",
+        "sab_t1_id",
+        "dom_t2_id",
+        "lun_t2_id",
+        "mar_t2_id",
+        "mie_t2_id",
+        "jue_t2_id",
+        "vie_t2_id",
+        "sab_t2_id",
+      ];
+      const arrModo = ["modo_vent", "modo_hume", "modo_t1", "modo_t2"];
+      const arrEstado = [
+        "modo_vent_estado",
+        "modo_hume_estado",
+        "modo_t1_estado",
+        "modo_t2_estado",
+      ];
+      const arrTipo = ["tipo_vent", "tipo_hume"];
+      arrTH.forEach((e) => {
+        document.addEventListener("DOMContentLoaded", function () {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById(e).innerHTML = this.responseText;
+            }
+          };
+          xhttp.open("GET", "/" + e, true);
+          xhttp.send();
+        });
+      });
+
+      arrTipo.forEach((e) => {
+        document.addEventListener("DOMContentLoaded", function () {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById(e).className = this.responseText;
+              if (e.id == "tipo_vent") {
+                if (document.getElementById(e).className == "boton_tipo1") {
+                  document.getElementById(e).innerHTML = "Enfriamiento";
+                } else {
+                  document.getElementById(e).innerHTML = "Calefacción";
+                }
+              }
+              if (e.id == "tipo_hume") {
+                if (document.getElementById(e).className == "boton_tipo1") {
+                  document.getElementById(e).innerHTML = "Deshumidificación";
+                } else {
+                  document.getElementById(e).innerHTML = "Humidificación";
+                }
+              }
+            }
+          };
+          xhttp.open("GET", "/init?" + e, true);
+          xhttp.send();
+        });
+      });
+
+      arrModo.forEach((e) => {
+        document.addEventListener("DOMContentLoaded", function () {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById(e).className = this.responseText;
+              const estadoID = e + "_estado";
+              const configID = e + "_config";
+              if (document.getElementById(e).className == "boton_auto") {
+                document.getElementById(e).innerHTML = "Automatico";
+                document.getElementById(estadoID).style.display = "none";
+                document.getElementById(configID).style.display = "block";
+              } else {
+                document.getElementById(e).innerHTML = "Manual";
+                document.getElementById(estadoID).style.display = "block";
+                document.getElementById(configID).style.display = "none";
+              }
+            }
+          };
+          xhttp.open("GET", "/init?" + e, true);
+          xhttp.send();
+        });
+      });
+
+      arrEstado.forEach((e) => {
+        document.addEventListener("DOMContentLoaded", function () {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById(e).className = this.responseText;
+              if (document.getElementById(e).className == "boton_on") {
+                document.getElementById(e).innerHTML = "Encender";
+                if (e == "modo_vent_estado") {
+                  document
+                    .getElementById("icon-ventilacion")
+                    .classList.remove("fa-spin");
+                }
+                if (e == "modo_hume_estado") {
+                  document
+                    .getElementById("icon-humedad")
+                    .classList.remove("fa-bounce");
+                }
+                if (e == "modo_t1_estado") {
+                  document
+                    .getElementById("icon-iluminacion")
+                    .classList.remove("icon-iluminacion-on");
+                }
+                if (e == "modo_t2_estado") {
+                  document
+                    .getElementById("icon-riego")
+                    .classList.remove("fa-beat-fade");
+                }
+              }
+              if (document.getElementById(e).className == "boton_off") {
+                document.getElementById(e).innerHTML = "Apagar";
+                if (e == "modo_vent_estado") {
+                  document
+                    .getElementById("icon-ventilacion")
+                    .classList.add("fa-spin");
+                }
+                if (e == "modo_hume_estado") {
+                  document
+                    .getElementById("icon-humedad")
+                    .classList.add("fa-bounce");
+                }
+                if (e == "modo_t1_estado") {
+                  document
+                    .getElementById("icon-iluminacion")
+                    .classList.add("icon-iluminacion-on");
+                }
+                if (e == "modo_t2_estado") {
+                  document
+                    .getElementById("icon-riego")
+                    .classList.add("fa-beat-fade");
+                }
+              }
+            }
+          };
+          xhttp.open("GET", "/init?" + e, true);
+          xhttp.send();
+        });
+      });
+
+      arrValue.forEach((e) => {
+        document.addEventListener("DOMContentLoaded", function () {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById(e).value = this.responseText;
+            }
+          };
+          xhttp.open("GET", "/init?" + e, true);
+          xhttp.send();
+        });
+      });
+
+      arrClass.forEach((e) => {
+        document.addEventListener("DOMContentLoaded", function () {
+          var xhttp = new XMLHttpRequest();
+          xhttp.onreadystatechange = function () {
+            if (this.readyState == 4 && this.status == 200) {
+              document.getElementById(e).className = this.responseText;
+            }
+          };
+          xhttp.open("GET", "/init?" + e, true);
+          xhttp.send();
+        });
+      });
+
+      function funcionHora(e) {
+        console.log("hora?id=" + e.id + "&valor=" + e.value);
+        consultaGET("hora?id=" + e.id + "&valor=" + e.value);
+      }
+      function funcionDia(e) {
+        if (e.className == "activo") {
+          e.className = "inactivo";
+        } else {
+          e.className = "activo";
+        }
+        console.log("dia?id=" + e.id + "&estado=" + e.className);
+        consultaGET("dia?id=" + e.id + "&estado=" + e.className);
+      }
+      function funcionAjuste(e) {
+        console.log("ajuste?id=" + e.id + "&valor=" + e.value);
+        consultaGET("ajuste?id=" + e.id + "&valor=" + e.value);
+      }
+      function funcionSetpoint(e) {
+        console.log("setpoint?id=" + e.id + "&valor=" + e.value);
+        consultaGET("setpoint?id=" + e.id + "&valor=" + e.value);
+      }
+      function funcionTipo(e) {
+        if (e.id == "tipo_vent") {
+          if (e.className == "boton_tipo1") {
+            e.className = "boton_tipo2";
+            e.innerHTML = "Calefacción";
+          } else {
+            e.className = "boton_tipo1";
+            e.innerHTML = "Enfriamiento";
+          }
+        }
+        if (e.id == "tipo_hume") {
+          if (e.className == "boton_tipo1") {
+            e.className = "boton_tipo2";
+            e.innerHTML = "Humidificación";
+          } else {
+            e.className = "boton_tipo1";
+            e.innerHTML = "Deshumidificación";
+          }
+        }
+        console.log("tipo?id=" + e.id + "&estado=" + e.className);
+        consultaGET("tipo?id=" + e.id + "&estado=" + e.className);
+      }
+      function funcionAutoMan(e) {
+        const estadoID = e.id + "_estado";
+        const configID = e.id + "_config";
+        if (e.className == "boton_auto") {
+          e.className = "boton_man";
+          e.innerHTML = "Manual";
+          document.getElementById(estadoID).style.display = "block";
+          document.getElementById(configID).style.display = "none";
+        } else {
+          e.className = "boton_auto";
+          e.innerHTML = "Automatico";
+          document.getElementById(estadoID).style.display = "none";
+          document.getElementById(configID).style.display = "block";
+        }
+        console.log("modo?id=" + e.id + "&estado=" + e.className);
+        consultaGET("modo?id=" + e.id + "&estado=" + e.className);
+      }
+      function funcionOnOff(e) {
+        if (e.className == "boton_on") {
+          e.className = "boton_off";
+          e.innerHTML = "Apagar";
+          if (e.id == "modo_vent_estado") {
+            document
+              .getElementById("icon-ventilacion")
+              .classList.add("fa-spin");
+          }
+          if (e.id == "modo_hume_estado") {
+            document.getElementById("icon-humedad").classList.add("fa-bounce");
+          }
+          if (e.id == "modo_t1_estado") {
+            document
+              .getElementById("icon-iluminacion")
+              .classList.add("icon-iluminacion-on");
+          }
+          if (e.id == "modo_t2_estado") {
+            document.getElementById("icon-riego").classList.add("fa-beat-fade");
+          }
+        } else {
+          e.className = "boton_on";
+          e.innerHTML = "Encender";
+          if (e.id == "modo_vent_estado") {
+            document
+              .getElementById("icon-ventilacion")
+              .classList.remove("fa-spin");
+          }
+          if (e.id == "modo_hume_estado") {
+            document
+              .getElementById("icon-humedad")
+              .classList.remove("fa-bounce");
+          }
+          if (e.id == "modo_t1_estado") {
+            document
+              .getElementById("icon-iluminacion")
+              .classList.remove("icon-iluminacion-on");
+          }
+          if (e.id == "modo_t2_estado") {
+            document
+              .getElementById("icon-riego")
+              .classList.remove("fa-beat-fade");
+          }
+        }
+        console.log("onOff?id=" + e.id + "&estado=" + e.className);
+        consultaGET("onOff?id=" + e.id + "&estado=" + e.className);
+      }
+
+      function consultaGET(consulta) {
+        const Http = new XMLHttpRequest();
+        console.log(`Consultando  ${consulta}`);
+        Http.open("GET", consulta);
+        Http.send();
+        Http.onreadystatechange = (e) => {
+          console.log(Http.status);
+          console.log(Http.responseText);
+        };
+      }
+      setInterval(function () {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("temperatura").innerHTML =
+              this.responseText;
+          }
+        };
+        xhttp.open("GET", "/temperatura", true);
+        xhttp.send();
+      }, 10000);
+      setInterval(function () {
+        var xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function () {
+          if (this.readyState == 4 && this.status == 200) {
+            document.getElementById("humedad").innerHTML = this.responseText;
+          }
+        };
+        xhttp.open("GET", "/humedad", true);
+        xhttp.send();
+      }, 10000);
+    </script>
+  </body>
+</html>
